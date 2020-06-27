@@ -409,6 +409,7 @@ function closeModal(modalClass = null, event = function () { }) {
     $(modalClass).iziModal('close', event);
 }
 
+// IF CHANGE CITY GET DISTRICTS
 function changeCity($this, district, neighborhood, quarter) {
     let city_id = $this.val();
     if(!city_id || city_id === null || city_id === ""){
@@ -429,6 +430,7 @@ function changeCity($this, district, neighborhood, quarter) {
     }
 }
 
+// IF CHANGE DISTRICT GET NEIGHBORHOODS
 function changeDistrict($this, neighborhood, quarter) {
     let district_id = $this.val();
     if(!district_id || district_id === null || district_id === ""){
@@ -447,6 +449,7 @@ function changeDistrict($this, neighborhood, quarter) {
     }
 }
 
+// IF CHANGE NEIGHBORHOOD GET QUARTERS
 function changeNeighborhood($this, quarter) {
     let neighborhood_id = $this.val();
     if (!neighborhood_id || neighborhood_id === null || neighborhood_id === "") {
