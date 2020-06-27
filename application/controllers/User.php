@@ -22,6 +22,7 @@ class User extends CI_Controller
         $this->viewData["page_name"] = "Profil";
         $id = get_active_user()->id;
         $this->viewData["active_user"] = $this->user_model->get(["id" => $id]);
+        $this->viewData["cities"] = $this->address_model->get_all("cities");
         $this->render();
     }
     public function update()
@@ -99,6 +100,26 @@ class User extends CI_Controller
         redirect(base_url("profil"));
     }
 
+    // IF CHANGE CITY RETURN DISTRICTS
+    public function changeCity(){
+        $postData = rClean($_POST);
+        $data = get_districts($postData["city_id"]);
+        echo json_encode($data);
+    }
+
+    // IF CHANGE DISTRICT RETURN NEIGHBORHOODS
+    public function changeDistrict(){
+        $postData = rClean($_POST);
+        $data = get_neighborhoods($postData["district_id"]);
+        echo json_encode($data);
+    }
+
+    // IF CHANGE NEIGHBORHOODS RETURN QUARTERS
+    public function changeNeighborhood(){
+        $postData = rClean($_POST);
+        $data = get_quarters($postData["neighborhood_id"]);
+        echo json_encode($data);
+    }
 
     public function order(){
         

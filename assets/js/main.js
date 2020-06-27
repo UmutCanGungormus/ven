@@ -337,45 +337,44 @@ $(document).ready(function () {
             location.reload();
         });
     })
-   
-    $(document).on("click",".showPass",function(){
-        let pass=$(".userPass");
+
+    $(document).on("click", ".showPass", function () {
+        let pass = $(".userPass");
         $(".showPass").hide();
         $(".hidePass").css("display", "block");;
         pass.attr('type', 'text');
-        
+
     });
-    $(document).on("click",".hidePass",function(){
-        let pass=$(".userPass");
+    $(document).on("click", ".hidePass", function () {
+        let pass = $(".userPass");
         $(".hidePass").hide();
         $(".showPass").css("display", "block");
         pass.attr('type', 'password');
-        
+
     });
 
-    $(document).on("click",".searching",function(e){
+    $(document).on("click", ".searching", function (e) {
         e.preventDefault();
         e.stopImmediatePropagation();
         let category = $("select[name='category']").val();
         let search = $("input[name = 'search']").val();
-        if(category === null || category === "" || !category){
-            if(search === null || search === "" || !search){
-                iziToast.error({title:"Hata!",message:"Boş Alan Bırakmayınız!",position:"topCenter"});
-            }else{
-                window.location.href = window.location.origin+"/ven/ara/"+encodeURIComponent(search)+"/";
+        if (category === null || category === "" || !category) {
+            if (search === null || search === "" || !search) {
+                iziToast.error({ title: "Hata!", message: "Boş Alan Bırakmayınız!", position: "topCenter" });
+            } else {
+                window.location.href = window.location.origin + "/ven/ara/" + encodeURIComponent(search) + "/";
             }
-                
-        }else{
-            window.location.href = window.location.origin+"/ven/ara/"+encodeURIComponent(search)+"/"+encodeURIComponent(category);
+
+        } else {
+            window.location.href = window.location.origin + "/ven/ara/" + encodeURIComponent(search) + "/" + encodeURIComponent(category);
         }
-        
+
     });
 
 });
 
-function createModal(modalClass = null,modalTitle=null,modalSubTitle = null, headerColor = "#88A0B9",width = 600,onOpening = function(){}, onOpened = function(){}, onClosing = function(){}, onClosed = function(){}, afterRender = function(){}, onFullScreen = function(){}, onResize = function(){},fullscreen = true,openFullscreen = false,closeOnEscape= true,closeButton = true,overlayClose = false,autoOpen= 0,zindex = 999)
-{
-    if(modalClass !== "" || modalClass !== null){
+function createModal(modalClass = null, modalTitle = null, modalSubTitle = null, width = 600, bodyOverflow = true, padding = "20px", radius = 0, headerColor = "#e20e17", onOpening = function () { }, onOpened = function () { }, onClosing = function () { }, onClosed = function () { }, afterRender = function () { }, onFullScreen = function () { }, onResize = function () { }, fullscreen = true, openFullscreen = false, closeOnEscape = true, closeButton = true, overlayClose = false, autoOpen = 0, zindex = 999) {
+    if (modalClass !== "" || modalClass !== null) {
         $(modalClass).iziModal({
             title: modalTitle,
             subtitle: modalSubTitle,
@@ -388,6 +387,9 @@ function createModal(modalClass = null,modalTitle=null,modalSubTitle = null, hea
             closeButton: closeButton,
             overlayClose: overlayClose,
             autoOpen: autoOpen,
+            padding: padding,
+            bodyOverflow: bodyOverflow,
+            radius: radius,
             onFullScreen: onFullScreen,
             onResize: onResize,
             onOpening: onOpening,
@@ -399,10 +401,64 @@ function createModal(modalClass = null,modalTitle=null,modalSubTitle = null, hea
     }
 }
 
-function openModal(modalClass = null,event = function () {}){
-    $(modalClass).iziModal('open',event);
+function openModal(modalClass = null, event = function () { }) {
+    $(modalClass).iziModal('open', event);
 }
 
-function closeModal(modalClass = null,event = function () {}){
-    $(modalClass).iziModal('close',event);
+function closeModal(modalClass = null, event = function () { }) {
+    $(modalClass).iziModal('close', event);
+}
+
+function changeCity($this, district, neighborhood, quarter) {
+    let city_id = $this.val();
+    if(!city_id || city_id === null || city_id === ""){
+        $(district).html("<option value='' data-city-id=''>Lütfen Önce İl Seçiniz.</option>");
+        $(neighborhood).html("<option value='' data-district-id=''>Lütfen Önce İlçe Seçiniz.</option>");
+        $(quarter).html("<option value='' data-neighborhood-id=''>Lütfen Önce Semt Seçiniz.</option>");
+    }else{
+        $(district).html("<option value='' data-city-id=''>Lütfen Önce İl Seçiniz.</option>");
+        $(neighborhood).html("<option value='' data-district-id=''>Lütfen Önce İlçe Seçiniz.</option>");
+        $(quarter).html("<option value='' data-neighborhood-id=''>Lütfen Önce Semt Seçiniz.</option>");
+        let options = "<option value='' data-city-id=''>Lütfen İlçe Seçiniz.</option>";
+        $.post(window.location.origin + "/ven/user/changeCity", { "city_id": city_id }, function (response) {
+            response.forEach(function (value, index) {
+                options += "<option value='" + value.district_id + "' data-city-id='" + value.cities_id + "'>" + value.district + "</option>";
+            });
+            $(district).html(options);
+        }, 'JSON');
+    }
+}
+
+function changeDistrict($this, neighborhood, quarter) {
+    let district_id = $this.val();
+    if(!district_id || district_id === null || district_id === ""){
+        $(neighborhood).html("<option value='' data-district-id=''>Lütfen Önce İlçe Seçiniz.</option>");
+        $(quarter).html("<option value='' data-neighborhood-id=''>Lütfen Önce Semt Seçiniz.</option>");
+    }else{
+        $(neighborhood).html("<option value='' data-district-id=''>Lütfen Önce İlçe Seçiniz.</option>");
+        $(quarter).html("<option value='' data-neighborhood-id=''>Lütfen Önce Semt Seçiniz.</option>");
+        let options = "<option value='' data-district-id=''>Lütfen Semt Seçiniz.</option>";
+        $.post(window.location.origin + "/ven/user/changeDistrict", { "district_id": district_id }, function (response) {
+            response.forEach(function (value, index) {
+                options += "<option value='" + value.neighborhood_id + "' data-district-id='" + value.districts_id + "'>" + value.neighborhood + "</option>";
+            });
+            $(neighborhood).html(options);
+        }, 'JSON');
+    }
+}
+
+function changeNeighborhood($this, quarter) {
+    let neighborhood_id = $this.val();
+    if (!neighborhood_id || neighborhood_id === null || neighborhood_id === "") {
+        $(quarter).html("<option value='' data-neighborhood-id=''>Lütfen Önce Semt Seçiniz.</option>");
+    } else {
+        $(quarter).html("<option value='' data-neighborhood-id=''>Lütfen Önce Semt Seçiniz.</option>");
+        let options = "<option value='' data-neighborhood-id=''>Lütfen Mahalle Seçiniz.</option>";
+        $.post(window.location.origin + "/ven/user/changeNeighborhood", { "neighborhood_id": neighborhood_id }, function (response) {
+            response.forEach(function (value, index) {
+                options += "<option value='" + value.quarter_id + "' data-neighborhood-id='" + value.neighborhoods_id + "'>" + value.quarter + "</option>";
+            });
+            $(quarter).html(options);
+        }, 'JSON');
+    }
 }

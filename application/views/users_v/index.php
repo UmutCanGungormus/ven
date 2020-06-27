@@ -4,7 +4,6 @@
             <div class="col-lg-12">
                 <div class="breadcrumb-text">
                     <a class="text-decoration-none" href="<?= base_url("/") ?>"><i class="fa fa-home"></i> Ven Cosmetic</a>
-
                     <span><?= $page_name ?></span>
                 </div>
             </div>
@@ -28,13 +27,10 @@
                         <li><i class="fas fa-chevron-right"></i><a class="text-decoration-none" href="<?= base_url("cikis") ?>">Çıkış Yap</a>
                     </ul>
                 </div>
-
-
             </div>
             <div class="col-lg-9 order-1 order-lg-2">
                 <section class="checkout-section p-0">
                     <div class="container">
-
                         <h4 class="mb-3">Hesap Detayları</h4>
                         <div class="row">
                             <div class="col-12">
@@ -60,7 +56,6 @@
                                                     <input type="password" class="userPass position-relative" id="cun" name="password" minlength="6" maxlength="8" placeholder="******">
                                                     <a style="padding:10px"> <i class="fas fa-eye showPass mt-1 position-absolute" style="right:20px;top:50px;"></i></a>
                                                     <a style="padding:10px"> <i class="fas fa-eye-slash hidePass mt-1 position-absolute" style="display:none;right:20px;top:50px;"></i></a>
-
                                                 </div>
                                                 <div class="col-6 col-sm-12 col-md-6 col-lg-6 col-xl-6">
                                                     <label for="cun-pw">Tekrar Şifreniz (Güncellemek için doldurun)<span>*</span></label>
@@ -73,12 +68,12 @@
                                         </form>
                                     </div>
                                     <!--
-                                        <div class="tab-pane fade" id="order-tracking-tab" role="tabpanel" aria-labelledby="order-tracking-tab">
+                                    <div class="tab-pane fade" id="order-tracking-tab" role="tabpanel" aria-labelledby="order-tracking-tab">
                                             
-                                        </div>
+                                    </div>
                                     -->
                                     <div class="tab-pane fade p-3 border" id="delivery-addresses-tab" role="tabpanel" aria-labelledby="delivery-addresses-tab">
-                                        <h3 style="border-bottom: 1px dashed #eeeeee" class="p-3 mb-3">Teslimat Adresleri <a href="<?=base_url("user/address_new_form")?>" class="float-right text-dark"><i class="fa fa-edit"></i>Adres Ekle</a></h3>
+                                        <h3 style="border-bottom: 1px dashed #eeeeee" class="p-3 mb-3">Teslimat Adresleri <a href="<?= base_url("user/address_new_form") ?>" class="float-right text-dark"><i class="fa fa-edit"></i>Adres Ekle</a></h3>
                                         <address class="p-3">
                                             <p class="mb-3">
                                                 <strong class="font-weight-bolder text-dark">
@@ -93,21 +88,79 @@
                                     </div>
                                     <div class="iziModal">
                                         <form onsubmit="return false;" method="post" enctype="multipart/form-data">
-                                            <input type="text" name="title" placeholder="Adres Başlığı">
-                                            <select name="city" id="city">
-                                                
-                                            </select>
-                                            <input type="text" name="title" placeholder="Adres ">
-                                            
+                                            <div class="form-group row mb-3">
+                                                <div class="col-3 align-items-center">
+                                                    <label for="address_title">Adres Başlığı :</label>
+                                                </div>
+                                                <div class="col-9">
+                                                    <input type="text" name="title" id="address_title" placeholder="Adres Başlığı" class="form-control rounded-0">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row mb-3">
+                                                <div class="col-3 align-items-center">
+                                                    <label for="addresss_city">İl :</label>
+                                                </div>
+                                                <div class="col-9">
+                                                    <select name="city" id="address_city" onchange="changeCity($(this),'.nsdistrict','.nsneighborhood','.nsquarter')" class="city nscity form-control rounded-0">
+                                                        <option value="">Lütfen İl Seçiniz.</option>
+                                                        <?php if(!empty($cities)):?>
+                                                            <?php foreach($cities as $city_key => $city_value):?>
+                                                                <option value="<?=$city_value->city_id?>"><?=$city_value->city?></option>
+                                                            <?php endforeach;?>
+                                                        <?php endif;?>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row mb-3">
+                                                <div class="col-3 align-items-center">
+                                                    <label for="address_district">İlçe :</label>
+                                                </div>
+                                                <div class="col-9">
+                                                    <select name="district" id="address_district" onchange="changeDistrict($(this),'.nsneighborhood','.nsquarter')" class="district nsdistrict form-control rounded-0">
+                                                        <option value="">Lütfen Önce İl Seçiniz.</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row mb-3">
+                                                <div class="col-3 align-items-center">
+                                                    <label for="address_neighborhood">Semt :</label>
+                                                </div>
+                                                <div class="col-9">
+                                                    <select name="neighborhood" id="address_neighborhood" onchange="changeNeighborhood($(this),'.nsquarter')" class="neighborhood nsneighborhood form-control rounded-0">
+                                                        <option value="">Lütfen Önce İlçe Seçiniz.</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row mb-3">
+                                                <div class="col-3 align-items-center">
+                                                    <label for="address_quarter">Mahalle :</label>
+                                                </div>
+                                                <div class="col-9">
+                                                    <select name="quarter" id="address_quarter" class="quarter nsquarter form-control rounded-0">
+                                                        <option value="">Lütfen Önce Semt Seçiniz.</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row mb-3">
+                                                <div class="col-3 align-items-center">
+                                                    <label for="address_address">Sokak Bilgisi :</label>
+                                                </div>
+                                                <div class="col-9">
+                                                    <textarea name="address" id="address_address" placeholder="Sokak Bilgisi" class="form-control rounded-0"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="form-group mb-3">
+                                                <button role="button" class="btn btn-dark float-right rounded-0">Adres Bilgisini Kaydet</button>
+                                            </div>
                                         </form>
                                     </div>
                                     <script>
-                                        $(document).ready(function(){
-                                            createModal(".iziModal","ADRES EKLE","ADRES EKLE");
-                                            $(document).on("click",".editAddress",function(){
+                                        $(document).ready(function() {
+                                            createModal(".iziModal", "ADRES EKLE", "ADRES EKLE");
+                                            $(document).on("click", ".editAddress", function() {
                                                 openModal('.iziModal');
                                             });
-                                            $(document).on("click",".deleteAddress",function(){
+                                            $(document).on("click", ".deleteAddress", function() {
                                                 openModal('.iziModal');
                                             });
                                         });

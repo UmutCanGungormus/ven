@@ -650,19 +650,19 @@ function get_activity_category_title($id)
     $item = $ci->activity_category_model->get(['id' => $id]);
     return $item->title;
 }
-function get_portfolio_cover($id){
-    $t=&get_instance();
+function get_portfolio_cover($id)
+{
+    $t = &get_instance();
     $t->load->model("portfolio_image_model");
-    $photo=$t->portfolio_image_model->get([
-        "portfolio_id"=>$id,
-        "isCover"=>1
+    $photo = $t->portfolio_image_model->get([
+        "portfolio_id" => $id,
+        "isCover" => 1
     ]);
     if ($photo) {
         return $photo->img_url;
     } else {
         return "default_image.png";
     }
-
 }
 
 
@@ -680,11 +680,12 @@ function get_news_category_title($id)
     $item = $ci->news_category_model->get(['id' => $id]);
     return $item->title;
 }
-function get_rank($id,$model){
- $t= &get_instance();
- $t->load->model($model);
- $rank=$t->$model->get(["id"=>$id]);
- return $rank;
+function get_rank($id, $model)
+{
+    $t = &get_instance();
+    $t->load->model($model);
+    $rank = $t->$model->get(["id" => $id]);
+    return $rank;
 }
 function get_news_title($id)
 {
@@ -693,11 +694,12 @@ function get_news_title($id)
     $item = $ci->news_model->get(['id' => $id]);
     return $item->title;
 }
-function get_count($model){
-    $t=&get_instance();
+function get_count($model)
+{
+    $t = &get_instance();
     $t->load->model($model);
-    $count= $t->$model->rowCount([
-        "isActive"=>1
+    $count = $t->$model->rowCount([
+        "isActive" => 1
     ]);
     return $count;
 }
@@ -940,10 +942,11 @@ function get_product_category_title($category_id = 0)
         return "<b style='color:red'>Tanımlı Değil</b>";
     }
 }
-function get_banner_photo($seo){
-    $t=&get_instance();
+function get_banner_photo($seo)
+{
+    $t = &get_instance();
     $t->load->model("home_banner_model");
-    $photo=$t->home_banner_model->get([
+    $photo = $t->home_banner_model->get([
         "title" => $seo
     ]);
     return $photo->img_url;
@@ -955,7 +958,7 @@ function get_product_cover_photo($id)
     $photo = $t->product_image_model->get(
         array(
             "product_id" => $id,
-            "isCover"=>1
+            "isCover" => 1
         )
     );
     if ($photo) {
@@ -1019,4 +1022,77 @@ function get_page_list($page = null)
         "contact_v"             => "İletişim Sayfası",
     );
     return (empty($page)) ? $page_list : $page_list[$page];
+}
+
+
+// ADDRESS MODEL IS IN THE AUTOLOAD NO NEED TO RE-LOAD THEM.
+// GET CITIES OR CITY
+function get_cities($city_id = null)
+{
+    $t = &get_instance();
+    $cities = [];
+    if (!empty($city_id)) :
+        array_push($cities, $t->address_model->get("cities", [
+            "city_id" => $city_id
+        ]));
+    else :
+        $cities = $t->address_model->get_all("cities");
+    endif;
+    return $cities;
+}
+
+// GET DISTRICTS OR DISTRICT
+function get_districts($city_id, $district_id = null)
+{
+    $districts = [];
+    if (!empty($city_id)) :
+        $t = &get_instance();
+        if (!empty($district_id)) :
+            array_push($districts, $t->address_model->get("districts", [
+                "cities_id" => $city_id,
+                "district_id" => $district_id
+            ]));
+        else :
+            $districts = $t->address_model->get_all("districts", ["cities_id" => $city_id]);
+        endif;
+    endif;
+    return $districts;
+}
+
+// GET NEIGHBORHOODS OR NEIGHBORHOOD
+function get_neighborhoods($district_id, $neighborhood_id = null)
+{
+    $neighborhoods = [];
+    if (!empty($district_id)) :
+        $t = &get_instance();
+
+        if (!empty($neighborhood_id)) :
+            array_push($neighborhoods, $t->address_model->get("neighborhoods", [
+                "districts_id" => $district_id,
+                "neighborhood_id" => $neighborhood_id
+            ]));
+        else :
+            $neighborhoods = $t->address_model->get_all("neighborhoods", ["districts_id" => $district_id]);
+        endif;
+    endif;
+    return $neighborhoods;
+}
+
+// GET QUARTERS OR QUARTER WITH POSTAL CODE
+function get_quarters($neighborhood_id, $quarter_id = null)
+{
+    $quarters = [];
+    if (!empty($neighborhood_id)) :
+        $t = &get_instance();
+
+        if (!empty($quarter_id)) :
+            array_push($quarters, $t->address_model->get("quarters", [
+                "neighborhoods_id" => $neighborhood_id,
+                "quarter_id" => $quarter_id
+            ]));
+        else :
+            $quarters = $t->address_model->get_all("quarters", ["neighborhoods_id" => $neighborhood_id]);
+        endif;
+    endif;
+    return $quarters;
 }
